@@ -4,11 +4,11 @@ public class WordModel {
     /**
      * 单词
      */
-    private String word;
+    private String word = "";
     /**
      * 等级
      */
-    private String level;
+    private int level;
 
     public String getExplain() {
         return explain;
@@ -26,17 +26,18 @@ public class WordModel {
         this.word = word;
     }
 
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
-    }
 
     /**
      * 解释
      */
 
-    private String explain;
+    private String explain ="";
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
 }

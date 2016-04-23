@@ -11,11 +11,11 @@ public class ArticleModel {
     /**
      * 英文标题
      */
-    private String engTitle;
+    private String engTitle = "";
     /**
      * 中文标题
      */
-    private String chTitle;
+    private String chTitle = "";
     /**
      * 生词和短语
      */
@@ -23,14 +23,26 @@ public class ArticleModel {
     /**
      * 英文内容
      */
-    private String engContent;
+    private String engContent = "";
     /**
      * 中文内容
      */
-    private String chContent;
+    private String chContent ="";
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return "ArticleModel{" +
+                "id=" + id +
+                ", engTitle='" + engTitle + '\'' +
+                ", chTitle='" + chTitle + '\'' +
+                ", newWords=" + newWords +
+                ", engContent='" + engContent + '\'' +
+                ", chContent='" + chContent + '\'' +
+                '}'+"\n";
     }
 
     public void setId(int id) {

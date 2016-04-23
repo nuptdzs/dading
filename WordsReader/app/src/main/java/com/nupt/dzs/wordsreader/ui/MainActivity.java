@@ -2,35 +2,53 @@ package com.nupt.dzs.wordsreader.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.nupt.dzs.wordsreader.R;
+import com.nupt.dzs.wordsreader.common.BaseActivity;
+import com.nupt.dzs.wordsreader.impl.IArticleListView;
+import com.nupt.dzs.wordsreader.model.ArticleModel;
+import com.nupt.dzs.wordsreader.presenter.ArticleListPresenter;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+public class MainActivity extends BaseActivity
+        implements NavigationView.OnNavigationItemSelectedListener, IArticleListView {
+    ArticleListPresenter presenter;
+    FloatingActionButton fab;
+    @Bind(R.id.tvContent)
+    TextView tvContent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        presenter = new ArticleListPresenter(this);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        initView();
+    }
+
+    public void initView(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+
             }
         });
 
@@ -99,5 +117,20 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void viewDetail(ArticleModel articleModel) {
+
+    }
+
+    @Override
+    public void loadArticles(List<ArticleModel> articleModels) {
+        tvContent.setText(articleModels.toString());
+    }
+
+    @OnClick(R.id.btReadFile)
+    public void onClick() {
+        presenter.loadFile();
     }
 }
