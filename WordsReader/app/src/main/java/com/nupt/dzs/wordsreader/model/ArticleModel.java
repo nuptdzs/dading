@@ -1,9 +1,10 @@
 package com.nupt.dzs.wordsreader.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class ArticleModel {
+public class ArticleModel implements Serializable{
     /**
      * 文章id
      */
@@ -28,6 +29,7 @@ public class ArticleModel {
      * 中文内容
      */
     private String chContent ="";
+    private int WordCount;
 
     public int getId() {
         return id;
@@ -42,7 +44,8 @@ public class ArticleModel {
                 ", newWords=" + newWords +
                 ", engContent='" + engContent + '\'' +
                 ", chContent='" + chContent + '\'' +
-                '}'+"\n";
+                ", WordCount=" + WordCount +
+                '}';
     }
 
     public void setId(int id) {
@@ -87,5 +90,13 @@ public class ArticleModel {
 
     public void setChContent(String chContent) {
         this.chContent = chContent;
+    }
+
+    public int getWordCount() {
+        return WordCount;
+    }
+
+    public void setWordCount(int wordCount) {
+        WordCount = wordCount;
     }
 }

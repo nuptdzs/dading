@@ -1,12 +1,13 @@
-package com.nupt.dzs.wordsreader.ui;
+package com.nupt.dzs.wordsreader.ui.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,7 +18,9 @@ import com.nupt.dzs.wordsreader.R;
 import com.nupt.dzs.wordsreader.common.BaseActivity;
 import com.nupt.dzs.wordsreader.impl.IArticleListView;
 import com.nupt.dzs.wordsreader.model.ArticleModel;
+import com.nupt.dzs.wordsreader.model.WordModel;
 import com.nupt.dzs.wordsreader.presenter.ArticleListPresenter;
+import com.nupt.dzs.wordsreader.ui.adapter.ArticleListAdapter;
 
 import java.util.List;
 
@@ -29,8 +32,9 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener, IArticleListView {
     ArticleListPresenter presenter;
     FloatingActionButton fab;
-    @Bind(R.id.tvContent)
-    TextView tvContent;
+    @Bind(R.id.rvArticleList)
+    RecyclerView rvArticleList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,20 +42,32 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
+        presenter.loadFile();
     }
 
-    public void initView(){
+    public void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                rvArticleList.smoothScrollToPosition(0);
             }
         });
-
+        rvArticleList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(dy>0){
+                    fab.setVisibility(View.VISIBLE);
+                }else {
+                    fab.setVisibility(View.GONE);
+                }
+            }
+        });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -126,11 +142,15 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void loadArticles(List<ArticleModel> articleModels) {
-        tvContent.setText(articleModels.toString());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false);
+        rvArticleList.setLayoutManager(linearLayoutManager);
+        rvArticleList.setAdapter(new ArticleListAdapter(this,articleModels));
     }
 
-    @OnClick(R.id.btReadFile)
-    public void onClick() {
-        presenter.loadFile();
+    @Override
+    public void loadWords(List<WordModel> wordModels) {
+        //tvContent.setText(wordModels.toString());
+
     }
+
 }

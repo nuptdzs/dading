@@ -1,6 +1,8 @@
 package com.nupt.dzs.wordsreader.model;
 
-public class WordModel {
+import java.io.Serializable;
+
+public class WordModel implements Serializable{
     /**
      * 单词
      */
@@ -9,6 +11,14 @@ public class WordModel {
      * 等级
      */
     private int level;
+    /**
+     * 解释
+     */
+    private String explain ="";
+    /**
+     * 词性
+     */
+    private String type;
 
     public String getExplain() {
         return explain;
@@ -26,18 +36,29 @@ public class WordModel {
         this.word = word;
     }
 
-
-    /**
-     * 解释
-     */
-
-    private String explain ="";
-
     public int getLevel() {
         return level;
     }
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "WordModel{" +
+                "word='" + word + '\'' +
+                ", level=" + level +
+                ", explain='" + explain + '\'' +
+                ", type='" + type + '\'' +
+                '}';
     }
 }
