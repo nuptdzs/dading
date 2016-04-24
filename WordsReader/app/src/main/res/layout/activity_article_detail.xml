@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     app:layout_scrollFlags="scroll|exitUntilCollapsed"
-    tools:context="com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity">
+    tools:context="com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity"
+    >
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        >
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -24,6 +26,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_article_detail" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:scrollbars="none">
+        <include layout="@layout/content_article_detail" />
+    </ScrollView>
 
 </android.support.design.widget.CoordinatorLayout>
