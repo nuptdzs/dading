@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.nupt.dzs.wordsreader.R;
+import com.nupt.dzs.wordsreader.impl.IArticleListView;
 import com.nupt.dzs.wordsreader.model.ArticleModel;
 import com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity;
 
@@ -17,11 +18,13 @@ import java.util.List;
 public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.ArticleItemVH> {
 
 
-    private Context mContext;
+    private IArticleListView mActicleListView;
     private List<ArticleModel> articleModels;
+    private Context mContext;
 
-    public ArticleListAdapter(Context context, List<ArticleModel> models) {
-        mContext = context;
+    public ArticleListAdapter(IArticleListView iArticleListView, List<ArticleModel> models) {
+        mActicleListView = iArticleListView;
+        mContext = iArticleListView.getContext();
         articleModels = models;
     }
 
@@ -45,11 +48,16 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
         TextView tvTitle;
         TextView tvPreview;
         TextView tvTextCount;
+        View itemview;
         public ArticleItemVH(View itemView) {
             super(itemView);
-            tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
-            tvPreview = (TextView) itemView.findViewById(R.id.tvPreview);
-            tvTextCount = (TextView) itemView.findViewById(R.id.tvText_count);
+            if(itemview==null){
+                itemview = itemView;
+                tvTitle = (TextView) itemView.findViewById(R.id.tvTitle);
+                tvPreview = (TextView) itemView.findViewById(R.id.tvPreview);
+                tvTextCount = (TextView) itemView.findViewById(R.id.tvText_count);
+            }
+
         }
 
         public void setdata(final ArticleModel articleModel) {
@@ -59,9 +67,7 @@ public class ArticleListAdapter extends RecyclerView.Adapter<ArticleListAdapter.
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(mContext, ArticleDetailActivity.class);
-                    intent.putExtra("data",articleModel);
-                    mContext.startActivity(intent);
+                    mActicleListView.viewDetail(articleModel);
                 }
             });
         }

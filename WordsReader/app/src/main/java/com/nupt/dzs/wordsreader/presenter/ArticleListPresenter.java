@@ -46,6 +46,8 @@ public class ArticleListPresenter {
                             mView.hideLoading();
                         }
                     });
+        }else {
+            mView.loadArticles(MyApplication.articleModels);
         }
 
     }

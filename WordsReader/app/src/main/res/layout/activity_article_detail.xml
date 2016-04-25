@@ -6,14 +6,12 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     app:layout_scrollFlags="scroll|exitUntilCollapsed"
-    tools:context="com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity"
-    >
+    tools:context="com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        >
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -26,12 +24,26 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:scrollbars="none">
-        <include layout="@layout/content_article_detail" />
-    </ScrollView>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+            <include layout="@layout/content_article_detail" />
+        </ScrollView>
 
+        <android.support.v7.widget.AppCompatSeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/widget_padding"
+            android:progress="1"
+            android:max="5"/>
+
+    </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

@@ -1,5 +1,6 @@
 package com.nupt.dzs.wordsreader.ui.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -29,7 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity
-        implements NavigationView.OnNavigationItemSelectedListener, IArticleListView {
+        implements IArticleListView, NavigationView.OnNavigationItemSelectedListener {
     ArticleListPresenter presenter;
     FloatingActionButton fab;
     @Bind(R.id.rvArticleList)
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity
     public void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //设置滑动效果 生成回到顶部按钮
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -68,13 +70,16 @@ public class MainActivity extends BaseActivity
                 }
             }
         });
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        assert drawer != null;
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -87,34 +92,12 @@ public class MainActivity extends BaseActivity
             super.onBackPressed();
         }
     }
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     @Override
     public void viewDetail(ArticleModel articleModel) {
-
+        Intent intent = new Intent(this, ArticleDetailActivity.class);
+        intent.putExtra("data",articleModel);
+        startActivity(intent);
     }
 
     @Override
@@ -126,8 +109,11 @@ public class MainActivity extends BaseActivity
 
     @Override
     public void loadWords(List<WordModel> wordModels) {
-        //tvContent.setText(wordModels.toString());
 
     }
 
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        return false;
+    }
 }
