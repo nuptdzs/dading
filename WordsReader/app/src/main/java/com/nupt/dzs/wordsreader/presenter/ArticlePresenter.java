@@ -1,5 +1,6 @@
 package com.nupt.dzs.wordsreader.presenter;
 
+import android.media.MediaPlayer;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -15,10 +16,14 @@ import com.nupt.dzs.wordsreader.impl.IArticleView;
 import com.nupt.dzs.wordsreader.model.WordModel;
 import com.nupt.dzs.wordsreader.ui.view.WordSpan;
 
+import java.io.IOException;
+
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -36,29 +41,31 @@ public class ArticlePresenter {
 
     /**
      * 添加对应等级的单词标注
+     *
      * @param i
      */
     public void markWordBy(int i) {
         String s = iArticleView.getArticle();
-        Observable.just(spliSpanableString(i,s))
+        Observable.just(spliSpanableString(i, s))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<SpannableString>() {
-            @Override
-            public void call(SpannableString spannableString) {
-                iArticleView.loadArticleBySpaned(spannableString);
-            }
-        });
+                    @Override
+                    public void call(SpannableString spannableString) {
+                        iArticleView.loadArticleBySpaned(spannableString);
+                    }
+                });
     }
 
     /**
      * 文章内容和词汇级别选择标注文章
      * 此操作应置于逻辑处理层
+     *
      * @param i
      * @param s
      * @return
      */
-    public SpannableString spliSpanableString(int i,String s){
+    public SpannableString spliSpanableString(int i, String s) {
         iArticleView.clearWordSpans();
         SpannableString spannableString = new SpannableString(s);
         for (WordModel wordModel : MyApplication.wordModels) {
@@ -85,9 +92,9 @@ public class ArticlePresenter {
         return spannableString;
     }
 
-    public void searchWord(String word){
+    public void searchWord(String word) {
         RetrofitUtils.getBuilder(IRequest.baseUrl).build().create(ShanBayApi.class)
-                .searchWord(word,MyApplication.access_token)
+                .searchWord(word, MyApplication.access_token)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Response<WordResponse>>() {
@@ -103,7 +110,55 @@ public class ArticlePresenter {
 
                     @Override
                     public void onNext(Response<WordResponse> wordResponseResponse) {
+                        prepareAudio(wordResponseResponse.getData());
                         iArticleView.showSearchResult(wordResponseResponse.getData());
+                    }
+                });
+    }
+
+    public void prepareAudio(final WordResponse wordResponse) {
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    mediaPlayer.reset();
+                    mediaPlayer.setDataSource(wordResponse.getAudio());
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                super.run();
+            }
+        }.start();
+
+    }
+
+    MediaPlayer mediaPlayer = new MediaPlayer();
+
+    public void displayAudio() {
+        Observable.create(new Observable.OnSubscribe<Boolean>() {
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                mediaPlayer.start();
+                subscriber.onNext(true);
+                subscriber.onCompleted();
+            }
+        }).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+
                     }
                 });
     }

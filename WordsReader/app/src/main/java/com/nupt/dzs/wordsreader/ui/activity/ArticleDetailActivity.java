@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -53,6 +54,8 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
     TextView tvWordContent;
     @Bind(R.id.tvWordLevel)
     TextView tvWordLevel;
+    @Bind(R.id.imgPlay)
+    ImageView imgPlay;
     /**
      * 文章内容
      */
@@ -154,6 +157,12 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
         tvWordContent.setText(wordResponse.getContent());
         tvPronunciation.setText(String.format("/%s/",wordResponse.getPronunciation()));
         tvDefin.setText(wordResponse.getDefinition());
+        imgPlay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                articlePresenter.displayAudio();
+            }
+        });
     }
 
     /**

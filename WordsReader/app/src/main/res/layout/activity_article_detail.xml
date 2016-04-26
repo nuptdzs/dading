@@ -90,6 +90,7 @@
                                 android:textSize="@dimen/big_text_size"
                                 android:text="/ksj:d/"/>
                             <ImageView
+                                android:id="@+id/imgPlay"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:src="@mipmap/laba_do"/>
