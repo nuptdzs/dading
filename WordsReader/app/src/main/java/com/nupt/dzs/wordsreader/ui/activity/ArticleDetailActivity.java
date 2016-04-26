@@ -1,26 +1,21 @@
 package com.nupt.dzs.wordsreader.ui.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatRatingBar;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
-import android.text.method.MovementMethod;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.RatingBar;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.github.channguyen.rsv.RangeSliderView;
 import com.nupt.dzs.wordsreader.R;
 import com.nupt.dzs.wordsreader.common.BaseActivity;
-import com.nupt.dzs.wordsreader.common.MyApplication;
+import com.nupt.dzs.wordsreader.http.response.WordResponse;
 import com.nupt.dzs.wordsreader.impl.IArticleView;
 import com.nupt.dzs.wordsreader.model.ArticleModel;
 import com.nupt.dzs.wordsreader.model.WordModel;
@@ -30,7 +25,6 @@ import com.nupt.dzs.wordsreader.utils.TextJustification;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -45,6 +39,20 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
     TextView tvContent;
     @Bind(R.id.seekBar)
     SeekBar seekBar;
+    @Bind(R.id.moveBar)
+    FrameLayout moveBar;
+    @Bind(R.id.tvPronunciation)
+    TextView tvPronunciation;
+    @Bind(R.id.tvDefin)
+    TextView tvDefin;
+    @Bind(R.id.tvExample)
+    TextView tvExample;
+    @Bind(R.id.llWordInfo)
+    FrameLayout llWordInfo;
+    @Bind(R.id.tvWordContent)
+    TextView tvWordContent;
+    @Bind(R.id.tvWordLevel)
+    TextView tvWordLevel;
     /**
      * 文章内容
      */
@@ -54,6 +62,7 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
      */
     private ArticlePresenter articlePresenter;
 
+    @SuppressLint("PrivateResource")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +83,7 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
         tvContent.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                if(!hasLoaded){
+                if (!hasLoaded) {
                     hasLoaded = true;
                     loadArticles();
                 }
@@ -84,6 +93,7 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 articlePresenter.markWordBy(progress);
+                tvWordLevel.setText("当前高亮单词等级为："+progress);
             }
 
             @Override
@@ -112,13 +122,12 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
     private void loadArticles() {
         Intent intent = getIntent();
         articleModel = (ArticleModel) intent.getSerializableExtra("data");
-        getSupportActionBar().setTitle("Lesson "+articleModel.getId());
+        getSupportActionBar().setTitle("Lesson " + articleModel.getId());
         tvTitle.setText(articleModel.getEngTitle());
         tvContent.setText(articleModel.getEngContent());
         float width = tvContent.getWidth();
-        String s= TextJustification.justify(tvContent,width);
+        String s = TextJustification.justify(tvContent, width);
         tvContent.setText(s);
-
         articlePresenter.markWordBy(level);
     }
 
@@ -128,10 +137,28 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
     @Override
     public void showWordInfo(WordModel wordModel) {
         resetWordSpan();
+        llWordInfo.setVisibility(View.VISIBLE);
+        llWordInfo.setAnimation(AnimationUtils.loadAnimation(this,R.anim.int_from_bottom));
+        llWordInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetWordSpan();
+                v.setVisibility(View.GONE);
+            }
+        });
+        articlePresenter.searchWord(wordModel.getWord());
+    }
+
+    @Override
+    public void showSearchResult(WordResponse wordResponse) {
+        tvWordContent.setText(wordResponse.getContent());
+        tvPronunciation.setText(String.format("/%s/",wordResponse.getPronunciation()));
+        tvDefin.setText(wordResponse.getDefinition());
     }
 
     /**
      * 获得当前经过排版的文章内容
+     *
      * @return
      */
     @Override
@@ -141,6 +168,7 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
 
     /**
      * 添加span及标注，用以后期处理
+     *
      * @param wordSpan
      */
     @Override
@@ -155,6 +183,7 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
 
     /**
      * 加载经过标注处理的文章内容
+     *
      * @param spannableString
      */
     @Override
@@ -167,8 +196,8 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
     /**
      * 重置标注
      */
-    public void resetWordSpan(){
-        for(WordSpan wordSpan:wordSpanList){
+    public void resetWordSpan() {
+        for (WordSpan wordSpan : wordSpanList) {
             wordSpan.checked = false;
         }
         tvContent.invalidate();

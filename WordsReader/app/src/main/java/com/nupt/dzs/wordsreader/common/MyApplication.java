@@ -13,7 +13,7 @@ import java.util.List;
  * @copyright by ${COMPANY}
  */
 public class MyApplication extends Application {
-
     public static List<WordModel> wordModels;
     public static List<ArticleModel> articleModels;
+    public static String access_token = "xc9aZh38dpfAkkTCkvDMwCgKf1miBP";
 }

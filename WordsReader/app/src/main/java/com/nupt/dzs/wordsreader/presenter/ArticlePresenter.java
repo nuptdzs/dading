@@ -6,11 +6,17 @@ import android.text.method.LinkMovementMethod;
 
 import com.nupt.dzs.wordsreader.R;
 import com.nupt.dzs.wordsreader.common.MyApplication;
+import com.nupt.dzs.wordsreader.http.RetrofitUtils;
+import com.nupt.dzs.wordsreader.http.ShanBayApi;
+import com.nupt.dzs.wordsreader.http.request.IRequest;
+import com.nupt.dzs.wordsreader.http.response.Response;
+import com.nupt.dzs.wordsreader.http.response.WordResponse;
 import com.nupt.dzs.wordsreader.impl.IArticleView;
 import com.nupt.dzs.wordsreader.model.WordModel;
 import com.nupt.dzs.wordsreader.ui.view.WordSpan;
 
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -77,5 +83,28 @@ public class ArticlePresenter {
             }
         }
         return spannableString;
+    }
+
+    public void searchWord(String word){
+        RetrofitUtils.getBuilder(IRequest.baseUrl).build().create(ShanBayApi.class)
+                .searchWord(word,MyApplication.access_token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Response<WordResponse>>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<WordResponse> wordResponseResponse) {
+                        iArticleView.showSearchResult(wordResponseResponse.getData());
+                    }
+                });
     }
 }

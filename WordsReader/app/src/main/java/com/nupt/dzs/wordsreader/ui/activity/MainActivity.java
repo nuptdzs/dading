@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.nupt.dzs.wordsreader.R;
 import com.nupt.dzs.wordsreader.common.BaseActivity;
+import com.nupt.dzs.wordsreader.http.request.IRequest;
+import com.nupt.dzs.wordsreader.http.request.TokenRequest;
+import com.nupt.dzs.wordsreader.http.response.TokenResponse;
 import com.nupt.dzs.wordsreader.impl.IArticleListView;
 import com.nupt.dzs.wordsreader.model.ArticleModel;
 import com.nupt.dzs.wordsreader.model.WordModel;
@@ -45,6 +48,7 @@ public class MainActivity extends BaseActivity
         initView();
         presenter.loadWords();
         presenter.loadFile();
+
     }
 
     public void initView() {
@@ -114,6 +118,6 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        return false;
+        return true;
     }
 }

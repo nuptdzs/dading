@@ -3,6 +3,7 @@ package com.nupt.dzs.wordsreader.impl;
 import android.text.SpannableString;
 
 import com.nupt.dzs.wordsreader.common.IBaseActivity;
+import com.nupt.dzs.wordsreader.http.response.WordResponse;
 import com.nupt.dzs.wordsreader.model.WordModel;
 import com.nupt.dzs.wordsreader.ui.view.WordSpan;
 
@@ -14,6 +15,7 @@ import com.nupt.dzs.wordsreader.ui.view.WordSpan;
  */
 public interface IArticleView extends IBaseActivity{
     void showWordInfo(WordModel wordModel);
+    void showSearchResult(WordResponse wordResponse);
     String getArticle();
     void addWordSpan(WordSpan wordSpan);
     void clearWordSpans();

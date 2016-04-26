@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    app:layout_scrollFlags="scroll|exitUntilCollapsed"
+    android:orientation="vertical"
     tools:context="com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -20,30 +19,99 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-
     </android.support.design.widget.AppBarLayout>
-
-
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            >
             <include layout="@layout/content_article_detail" />
         </ScrollView>
 
-        <android.support.v7.widget.AppCompatSeekBar
-            android:id="@+id/seekBar"
+        <FrameLayout
+            android:id="@+id/llWordInfo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/widget_padding"
-            android:progress="1"
-            android:max="5"/>
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="#ddffffff"
+                android:paddingBottom="@dimen/widget_padding"
+                android:layout_gravity="bottom">
+                <FrameLayout
+                    android:id="@+id/moveBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/widget_padding"
+                        android:layout_gravity="center"
+                        android:src="@mipmap/move"/>
+                </FrameLayout>
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            android:layout_marginLeft="@dimen/widget_padding"
+                            android:layout_marginRight="@dimen/widget_padding"
+                            android:padding="@dimen/widget_padding">
+                            <TextView
+                                android:id="@+id/tvWordContent"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="@dimen/big_text_size"
+                                android:text="hello"/>
+                            <TextView
+                                android:id="@+id/tvPronunciation"
+                                android:layout_width="0dp"
+                                android:paddingLeft="@dimen/widget_padding"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/big_text_size"
+                                android:text="/ksj:d/"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@mipmap/laba_do"/>
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/tvDefin"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/widget_padding"
+                            android:layout_marginRight="@dimen/widget_padding"
+                            android:text="n.你好"
+                            android:padding="@dimen/widget_padding"/>
+                        <TextView
+                            android:id="@+id/tvExample"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+                </ScrollView>
+            </LinearLayout>
+        </FrameLayout>
+
 
     </FrameLayout>
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

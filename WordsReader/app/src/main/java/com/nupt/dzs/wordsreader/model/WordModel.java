@@ -2,6 +2,7 @@ package com.nupt.dzs.wordsreader.model;
 
 import java.io.Serializable;
 
+
 public class WordModel implements Serializable{
     /**
      * 单词
