@@ -11,7 +11,9 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TextUtils {
     /**
@@ -78,6 +80,21 @@ public class TextUtils {
         return wordModels;
     }
 
+    public static Map<String,Integer> getWordsbyMap(String wordstxt){
+        Map<String,Integer> wordModels = new HashMap<>();
+        //按行读取总的单词信息
+        String[] words = wordstxt.split("\n");
+        //根据tab格式读取单词
+        for (String wordtxt : words) {
+            String[] text = wordtxt.split("\t");
+
+            //若单词不存在级别 则不读取
+            if (text.length>1&&text[1].matches("[0-9]")) {
+                wordModels.put(text[0], Integer.valueOf(text[1]));
+            }
+        }
+        return wordModels;
+    }
     /**
      *
      * @param articletxt

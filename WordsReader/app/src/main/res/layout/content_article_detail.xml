@@ -11,29 +11,6 @@
     tools:context="com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity"
     tools:showIn="@layout/activity_article_detail">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.AppCompatSeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:max="5"
-            android:padding="@dimen/widget_padding"
-            android:progress="1" />
-
-        <TextView
-            android:id="@+id/tvWordLevel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="选择高亮单词等级：1" />
-
-
-    </LinearLayout>
-
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="match_parent"
@@ -51,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:lineSpacingExtra="@dimen/small_padding"
-        android:textSize="15sp"
+        android:textSize="16sp"
+        android:textColor="@color/text_color_content"
         android:typeface="monospace" />
 </LinearLayout>

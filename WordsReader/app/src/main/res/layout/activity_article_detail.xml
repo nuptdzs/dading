@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#f2eec5"
     tools:context="com.nupt.dzs.wordsreader.ui.activity.ArticleDetailActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -35,17 +36,17 @@
         </ScrollView>
 
         <FrameLayout
-            android:id="@+id/llWordInfo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
             >
             <LinearLayout
+                android:id="@+id/llWordInfo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:background="#ddffffff"
                 android:paddingBottom="@dimen/widget_padding"
+                android:visibility="gone"
                 android:layout_gravity="bottom">
                 <FrameLayout
                     android:id="@+id/moveBar"

@@ -12,6 +12,7 @@ import com.nupt.dzs.wordsreader.utils.TextUtils;
 
 
 import java.util.List;
+import java.util.Map;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -72,5 +73,26 @@ public class ArticleListPresenter {
                     });
         }
 
+    }
+
+    public void loadWordsMap(){
+        if(MyApplication.wordModels==null){
+            Observable.just(TextUtils.getTxt(mView.getContext(),"nce4_words"))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .map(new Func1<String, Map<String,Integer>>() {
+                        @Override
+                        public Map<String,Integer> call(String s) {
+                            return TextUtils.getWordsbyMap(s);
+                        }
+                    })
+                    .subscribe(new Action1<Map<String,Integer>>() {
+                        @Override
+                        public void call(Map<String,Integer> wordModels) {
+                            MyApplication.wordParams = wordModels;
+                            Log.e("size",wordModels.size()+"");
+                        }
+                    });
+        }
     }
 }

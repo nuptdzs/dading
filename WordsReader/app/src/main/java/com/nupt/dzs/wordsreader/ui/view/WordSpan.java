@@ -22,6 +22,7 @@ public class WordSpan extends ClickableSpan implements UpdateLayout{
     IArticleView mArticleView;
     WordModel mWordModel;
     public boolean checked = false;
+    public int highLightLevel = 1;
     public WordSpan(IArticleView iArticleView, WordModel wordModel){
         mArticleView = iArticleView;
         mWordModel = wordModel;
@@ -36,9 +37,14 @@ public class WordSpan extends ClickableSpan implements UpdateLayout{
             ds.setUnderlineText(false); //去掉下划线
         }else {
             ds.bgColor = mContext.getResources().getColor(R.color.transparent);
+            if(mWordModel.getLevel()==highLightLevel){
+                ds.setColor(mContext.getResources().getColor(R.color.colorPrimary));
+                ds.setUnderlineText(true);
+            }else {
+                ds.setColor(mContext.getResources().getColor(R.color.text_color_content));
+                ds.setUnderlineText(false);
+            }
 
-            ds.setColor(mContext.getResources().getColor(R.color.colorPrimary));
-            ds.setUnderlineText(true); //去掉下划线
         }
     }
 

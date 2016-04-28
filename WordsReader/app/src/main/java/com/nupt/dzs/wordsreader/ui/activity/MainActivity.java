@@ -46,7 +46,7 @@ public class MainActivity extends BaseActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
-        presenter.loadWords();
+        presenter.loadWordsMap();
         presenter.loadFile();
 
     }

@@ -3,9 +3,8 @@ package com.nupt.dzs.wordsreader.presenter;
 import android.media.MediaPlayer;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
 
-import com.nupt.dzs.wordsreader.R;
+
 import com.nupt.dzs.wordsreader.common.MyApplication;
 import com.nupt.dzs.wordsreader.http.RetrofitUtils;
 import com.nupt.dzs.wordsreader.http.ShanBayApi;
@@ -17,6 +16,7 @@ import com.nupt.dzs.wordsreader.model.WordModel;
 import com.nupt.dzs.wordsreader.ui.view.WordSpan;
 
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import rx.Observable;
 import rx.Observer;
@@ -42,17 +42,19 @@ public class ArticlePresenter {
     /**
      * 添加对应等级的单词标注
      *
-     * @param i
+     * @param
      */
-    public void markWordBy(int i) {
-        String s = iArticleView.getArticle();
-        Observable.just(spliSpanableString(i, s))
+    public void markWordBy() {
+        iArticleView.showLoading("正在加载");
+        final String s = iArticleView.getArticle();
+        Observable.just(spliSpanableString(s))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<SpannableString>() {
                     @Override
                     public void call(SpannableString spannableString) {
                         iArticleView.loadArticleBySpaned(spannableString);
+                        iArticleView.hideLoading();
                     }
                 });
     }
@@ -61,14 +63,27 @@ public class ArticlePresenter {
      * 文章内容和词汇级别选择标注文章
      * 此操作应置于逻辑处理层
      *
-     * @param i
+     * @param
      * @param s
      * @return
      */
-    public SpannableString spliSpanableString(int i, String s) {
+    public SpannableString spliSpanableString(String s) {
         iArticleView.clearWordSpans();
         SpannableString spannableString = new SpannableString(s);
-        for (WordModel wordModel : MyApplication.wordModels) {
+        StringTokenizer stringTokenizer = new StringTokenizer(s," \t\n\r\f,.!?-(){}[]:;'",true);
+        int index = 0;
+        while (stringTokenizer.hasMoreElements()){
+            String token = stringTokenizer.nextToken();
+            int start = index;
+            index+=token.length();
+            if(isWord(token)){
+               WordModel wordmodel =  formWordList(token);
+                WordSpan wordSpan = new WordSpan(iArticleView,wordmodel);
+                spannableString.setSpan(wordSpan,start,index,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                iArticleView.addWordSpan(wordSpan);
+            }
+        }
+        /*for (WordModel wordModel : MyApplication.wordModels) {
             if (wordModel.getLevel() == i) {
                 String[] arr = s.split(wordModel.getWord());
                 if (arr.length > 1) {
@@ -88,19 +103,56 @@ public class ArticlePresenter {
                     }
                 }
             }
-        }
+        }*/
         return spannableString;
     }
 
-    public void searchWord(String word) {
+    /**
+     * 采用map对四级词汇等级对应表进行优化，加快匹配速度
+     * @param word
+     * @return
+     */
+    public WordModel formWordList(String word){
+        /*for(WordModel wordmodel:MyApplication.wordModels){
+            if(word.matches(wordmodel.getWord())){
+                return wordmodel;
+            }
+        }*/
+        Integer level = MyApplication.wordParams.get(word);
+        if(level == null){
+            level = 0;
+        }
+        WordModel wrodmodel = new WordModel();
+        wrodmodel.setWord(word);
+        wrodmodel.setLevel(level);
+        return wrodmodel;
+    }
+    public boolean isWord(String token){
+        return token.matches("[a-zA-Z]*");
+    }
+    public void searchWord(final String word) {
+        iArticleView.showLoading("正在查询...");
         RetrofitUtils.getBuilder(IRequest.baseUrl).build().create(ShanBayApi.class)
                 .searchWord(word, MyApplication.access_token)
                 .subscribeOn(Schedulers.io())
+                .map(new Func1<Response<WordResponse>, WordResponse>() {
+
+                    @Override
+                    public WordResponse call(Response<WordResponse> wordResponseResponse) {
+                        if(wordResponseResponse.getStatus_code()==0){
+                            if(wordResponseResponse.getData()!=null){
+                                prepareAudio(wordResponseResponse.getData());
+                                return wordResponseResponse.getData();
+                            }
+                            else return null;
+                        }else return null;
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Response<WordResponse>>() {
+                .subscribe(new Observer<WordResponse>() {
                     @Override
                     public void onCompleted() {
-
+                        iArticleView.hideLoading();
                     }
 
                     @Override
@@ -109,27 +161,34 @@ public class ArticlePresenter {
                     }
 
                     @Override
-                    public void onNext(Response<WordResponse> wordResponseResponse) {
-                        prepareAudio(wordResponseResponse.getData());
-                        iArticleView.showSearchResult(wordResponseResponse.getData());
+                    public void onNext(WordResponse wordResponseResponse) {
+                        if(wordResponseResponse!=null){
+                            iArticleView.showSearchResult(wordResponseResponse);
+                        }else {
+                            iArticleView.showToast("暂无该单词相关信息");
+                        }
                     }
                 });
     }
 
     public void prepareAudio(final WordResponse wordResponse) {
-        new Thread(){
+        try {
+            if(wordResponse.getAudio()!=null){
+                mediaPlayer.reset();
+                mediaPlayer.setDataSource(wordResponse.getAudio());
+                mediaPlayer.prepare();
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        /*new Thread(){
             @Override
             public void run() {
-                try {
-                    mediaPlayer.reset();
-                    mediaPlayer.setDataSource(wordResponse.getAudio());
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
                 super.run();
             }
-        }.start();
+        }.start();*/
 
     }
 
@@ -143,23 +202,6 @@ public class ArticlePresenter {
                 subscriber.onNext(true);
                 subscriber.onCompleted();
             }
-        }).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Boolean aBoolean) {
-
-                    }
-                });
+        }).subscribeOn(Schedulers.io()).subscribe();
     }
 }

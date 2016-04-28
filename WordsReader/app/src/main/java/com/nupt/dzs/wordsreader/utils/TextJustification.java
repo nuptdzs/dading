@@ -31,7 +31,7 @@ public class TextJustification {
         ArrayList<String> paraList = new ArrayList<String>();
         String[] paraArray = text.split("\\n+");
         for(String para:paraArray) {
-            paraList.add("  "+para.trim());
+            paraList.add("\t"+para.trim());
         }
         return paraList;
     }
