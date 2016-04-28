@@ -3,17 +3,26 @@ package com.nupt.dzs.wordsreader.ui.activity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.nupt.dzs.wordsreader.R;
@@ -90,7 +99,6 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
                 }
             }
         });
-        //tvContent.setTypeface(Typeface.createFromAsset(getAssets(),"SourceCodePro-Regular.ttf"));
     }
 
     /**
@@ -193,9 +201,75 @@ public class ArticleDetailActivity extends BaseActivity implements IArticleView 
      * 重置标注
      */
     public void resetWordSpan() {
-        for (WordSpan wordSpan : wordSpanList) {
+        for (WordSpan wordSpan : wordSpanList){
             wordSpan.checked = false;
         }
         tvContent.invalidate();
+    }
+
+    public void markWordByLevel(int level){
+        for(WordSpan wordSpan : wordSpanList){
+            wordSpan.highLightLevel = level;
+        }
+        tvContent.invalidate();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.article_menu,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        switch (item.getItemId()){
+            case R.id.nav_manage:
+                showLevelChoosView();
+                Log.e("hah","hahah");
+                break;
+        }
+        return false;
+    }
+
+    private PopupWindow popupWindow;
+    private View popView;
+    public void showLevelChoosView(){
+        if(popupWindow == null){
+            popupWindow = new PopupWindow(this);
+            popView = LayoutInflater.from(getContext()).inflate(R.layout.menu_choose_highlightlevel,null);
+            RadioGroup rg = (RadioGroup) popView.findViewById(R.id.radioButton);
+            rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, int checkedId) {
+                    switch (checkedId){
+                        case R.id.lv1:
+                            markWordByLevel(1);
+                            break;
+                        case R.id.lv2:
+                            markWordByLevel(2);
+                            break;
+                        case R.id.lv3:
+                            markWordByLevel(3);
+                            break;
+                        case R.id.lv4:
+                            markWordByLevel(4);
+                            break;
+                    }
+                    popupWindow.dismiss();
+                }
+            });
+            popView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    popupWindow.dismiss();
+                }
+            });
+            popupWindow.setBackgroundDrawable(new BitmapDrawable());
+            popupWindow.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
+            popupWindow.setHeight(ViewGroup.LayoutParams.MATCH_PARENT);
+            popupWindow.setOutsideTouchable(false);
+            popupWindow.setContentView(popView);
+        }
+        popupWindow.showAsDropDown(toolbar);
     }
 }
